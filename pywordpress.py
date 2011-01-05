@@ -1,24 +1,11 @@
 #!/usr/bin/env python
 import os
 import urllib
+import xmlrpclib
 import pprint
 from ConfigParser import SafeConfigParser
 
-# http://codex.wordpress.org/Installing/Updating_WordPress_with_Subversion
-def install_svn(path, version='2.9.2'):
-    cmd = 'svn co http://core.svn.wordpress.org/tags/%s %s' % (version, path)
-    print 'Running: %s' % cmd
-    os.system(cmd)
 
-def secretkey():
-    '''Obtain and print to stdout a wordpress secret key.'''
-    # since 2.6
-    url = 'https://api.wordpress.org/secret-key/1.1/'
-    out = urllib.urlopen(url)
-    print out.read()
-
-
-import xmlrpclib
 class Wordpress(object):
     '''Interact with an existing wordpress install via xml-rpc
 
@@ -46,6 +33,10 @@ class Wordpress(object):
 
     @classmethod
     def init_from_config(self, config_fp):
+        '''Class method to initialize a `Wordpress` instance from an ini file.
+
+        For an example ini file see config.ini.tmpl
+        '''
         cfg = SafeConfigParser()
         cfg.readfp(open(config_fp))
         wp_url = cfg.get('wordpress', 'url')
@@ -119,6 +110,8 @@ class Wordpress(object):
         return bool(result)
 
     def delete_all_pages(self):
+        '''Delete all pages (i.e. delete_page for each page in instance).
+        '''
         for pagedict in self.get_page_list():
             self._print('Deleting: %s' % pagedict)
             self.delete_page(pagedict['page_id'])
@@ -210,51 +203,31 @@ def _object_methods(obj):
     methods = dict(methods)
     return methods
 
-def _module_functions(functions):
-    local_functions = dict(functions)
-    for k,v in local_functions.items():
-        if not inspect.isfunction(v) or k.startswith('_'):
-            del local_functions[k]
-    return local_functions
-
 if __name__ == '__main__':
-    wpusage = '\n        '.join(
-        [ '%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '') for (name,m)
-        in sorted(_object_methods(Wordpress).items()) ])
+    _methods = _object_methods(Wordpress)
     usage = '''%prog {action}
 
-    install-svn path  # install wp via svn method to path
-    secretkey # generate secret keys for config
-    wordpress {command} [args]: work with wordpress site (via xmlrpc) specified
-            in config (url, username, password).
-        '''
+Actions:
+
+    '''
+    wpusage = '\n    '.join(
+        [ '%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '') for (name,m)
+        in sorted(_methods.items()) ])
     usage += wpusage
+
     parser = optparse.OptionParser(usage)
-    parser.add_option('-w', '--wp-version',
-            help='Wordpress version (e.g. 2.9.2) to use',
-            default='2.9.2')
     parser.add_option('-c', '--config',
             help='configuration file to use (e.g. for wordpress config)',
             default='config.ini')
     options, args = parser.parse_args()
-    if len(args) < 1:
+
+    if not args or not args[0] in _methods:
         parser.print_help()
         sys.exit(1)
     action = args[0] 
-    if action == 'install-svn':
-        path = args[1]
-        install_svn(path, options.wp_version)
-    elif action == 'secretkey':
-        secretkey()
-    elif action == 'migrate_okfn_dot_org':
-        migrate_okfn_dot_org()
-    elif action == 'wordpress':
-        wordpress = Wordpress.init_from_config(options.config)
-        wordpress.verbose = True
-        assert len(args) >= 2, 'Need a command for wordpress'
-        action = args[1]
-        getattr(wordpress, action)(*args[2:])
-    else:
-        parser.print_help()
-        sys.exit(1)
+    wordpress = Wordpress.init_from_config(options.config)
+    wordpress.verbose = True
+    out = getattr(wordpress, action)(*args[1:])
+    if out:
+        pprint.pprint(out)
 
