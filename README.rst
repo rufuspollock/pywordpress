@@ -9,24 +9,23 @@ Usage
 Command line
 ------------
 
-First you'll need to create a config.ini::
-
-    cp config.ini.tmpl config.ini
-
-Now edit this config.ini to have the config for the wordpress instance you want
-to work with.
-
-Now check out the commands::
+Check out the commands::
 
     wordpress.py -h 
+
+You will need to create a config with the details (url, login) of the wordpress
+instance you want to work with::
+
+    cp config.ini.tmpl config.ini
+    # now edit away ...
+    vim config.ini
+
 
 Python library
 --------------
 
-Usage::
+Read the code documentation::
 
-    pydoc pywordpress.Wordpress
-    # or
     >>> from pywordpress import Wordpress
     >>> help(Wordpress)
 

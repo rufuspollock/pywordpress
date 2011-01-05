@@ -2,13 +2,18 @@ from setuptools import setup, find_packages
 import sys, os
 
 __version__ = '0.1'
-__description__ = 'A pythonic interface to Wordpress using the Wordpress XML-RPC API'
+try:
+    fo = open('README.rst')
+    __description__ = fo.read()
+    fo.close()
+except:
+    __description__ = 'A pythonic interface to Wordpress using the Wordpress XML-RPC API'
 
 setup(
     name='pywordpress',
     version=__version__,
     license='mit',
-    description=__description__,
+    description=__description__.split('\n')[0],
     long_description=__description__,
     author='Rufus Pollock',
     url='http://bitbucket.org/rgrp/pywordpress/',
