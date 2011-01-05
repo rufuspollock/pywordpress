@@ -1,0 +1,10 @@
+syntax: glob
+
+# generic
+*.pyc
+*.swp
+*.egg-info/*
+# personal config
+config.ini
+test.ini
+
