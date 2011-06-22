@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-import os
-import urllib
-import xmlrpclib
+
+import inspect
+import optparse
 import pprint
-from ConfigParser import SafeConfigParser
+import sys
+import xmlrpc.client
 
 
 class Wordpress(object):
@@ -27,7 +28,7 @@ class Wordpress(object):
         self.password = password
         self.wp_url = wp_url
         xmlrpc_url = wp_url.rstrip('/') + '/xmlrpc.php'
-        self.server = xmlrpclib.ServerProxy(xmlrpc_url)
+        self.server = xmlrpc.client.ServerProxy(xmlrpc_url)
         self.blog_id = blog_id
         self.verbose = verbose
 
@@ -37,8 +38,11 @@ class Wordpress(object):
 
         For an example ini file see config.ini.tmpl
         '''
-        cfg = SafeConfigParser()
-        cfg.readfp(open(config_fp))
+        from configparser import ConfigParser
+        cfg = ConfigParser()
+        with open(config_fp) as infile:
+            cfg.read_file(infile)
+
         wp_url = cfg.get('wordpress', 'url')
         wp_user = cfg.get('wordpress', 'user')
         wp_password = cfg.get('wordpress', 'password')
@@ -193,37 +197,36 @@ class Wordpress(object):
         return changes
 
 
-
-import sys
-import optparse
-import inspect
 def _object_methods(obj):
     methods = inspect.getmembers(obj, inspect.ismethod)
-    methods = filter(lambda (name,y): not name.startswith('_'), methods)
+    methods = [name_y for name_y in methods if not name_y[0].startswith('_')]
     methods = dict(methods)
     return methods
 
-if __name__ == '__main__':
+
+def main(sysargs=sys.argv[:]):
     _methods = _object_methods(Wordpress)
     usage = '''%prog {action}
 
 Actions:
 
     '''
-    wpusage = '\n    '.join(
-        [ '%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '') for (name,m)
-        in sorted(_methods.items()) ])
+    wpusage = '\n    '.join([
+        '%s: %s' % (name, m.__doc__.split('\n')[0] if m.__doc__ else '')
+        for (name, m) in sorted(_methods.items())
+    ])
     usage += wpusage
 
     parser = optparse.OptionParser(usage)
     parser.add_option('-c', '--config',
             help='configuration file to use (e.g. for wordpress config)',
             default='config.ini')
-    options, args = parser.parse_args()
+    options, args = parser.parse_args(sysargs[1:])
 
     if not args or not args[0] in _methods:
         parser.print_help()
-        sys.exit(1)
+        return 1
+
     action = args[0] 
     wordpress = Wordpress.init_from_config(options.config)
     wordpress.verbose = True
@@ -231,3 +234,8 @@ Actions:
     if out:
         pprint.pprint(out)
 
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
