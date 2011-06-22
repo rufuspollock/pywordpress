@@ -27,7 +27,7 @@ setup(
     keywords='wordpress python',
     py_modules=['pywordpress'],
     zip_safe=False,
-    test_suite='nose.collector',
+    test_suite='test_pywordpress',
     classifiers = [
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',

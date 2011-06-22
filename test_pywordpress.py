@@ -1,9 +1,9 @@
-from unittest import TestCase
+import unittest
 
 import pywordpress
 
 
-class TestWordpress(TestCase):
+class TestWordpress(unittest.TestCase):
     _pages_to_cleanup = ()
 
     def setUp(self):
@@ -100,4 +100,8 @@ class TestWordpress(TestCase):
 
         _check('2nd')
         assert [change[2] for change in changes] == 2 * ['edited'], changes
+
+
+def test():
+    unittest.main()
 
