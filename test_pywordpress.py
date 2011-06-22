@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import pywordpress
@@ -7,6 +8,8 @@ class TestWordpress(unittest.TestCase):
     _pages_to_cleanup = ()
 
     def setUp(self):
+        self.assertTrue(os.path.exists('test.ini'),
+            'You must define a test configuration file called "test.ini"')
         self.wordpress = pywordpress.Wordpress.init_from_config('test.ini')
         self._pages_to_cleanup = []
 
@@ -24,27 +27,29 @@ class TestWordpress(unittest.TestCase):
         content = 'test content, from python'
         new_page_id = w.new_page(title=title, description=content)
         self._pages_to_cleanup.append(new_page_id)
-        assert new_page_id > 0
+        self.assertTrue(new_page_id > 0)
 
         pages = w.get_pages()
-        assert len(pages) == len(pages_start) + 1, (pages, pages_start)
+        self.assertEqual(len(pages), len(pages_start) + 1,
+                         str((pages, pages_start)))
         page = w.get_page(new_page_id)
-        assert page['title'] == title, page
-        assert page['description'] == content, page
+        self.assertEqual(page['title'], title, page)
+        self.assertEqual(page['description'], content, page)
 
         new_title = 'test title updated'
         edited = w.edit_page(new_page_id, title=new_title)
-        assert edited
+        self.assertTrue(edited)
         page = w.get_page(new_page_id)
-        assert page['title'] == new_title, page
-        assert page['description'] == content, page
+        self.assertEqual(page['title'], new_title, page)
+        self.assertEqual(page['description'], content, page)
 
         deleted = w.delete_page(new_page_id)
         pages = w.get_pages()
         pages2 = w.get_page_list()
         # see above re difference in set of pages returned
-        assert pages != pages2, (len(pages), len(pages2))
-        assert len(pages) == len(pages_start), (pages, pages_start)
+        self.assertNotEqual(pages, pages2, str((len(pages), len(pages2))))
+        self.assertEqual(len(pages), len(pages_start),
+                         str((pages, pages_start)))
 
     def test_02_create_many_pages(self):
         self.skipTest('Something is wrong with transactions or huh?')
@@ -75,19 +80,23 @@ class TestWordpress(unittest.TestCase):
                 [(p['page_id'], p) for p in self.wordpress.get_page_list()]
             )
             # FIXME `get_pages` returns different results than `get_page_list`
-            assert len(pages) == total_expected_n_pages, (
+            self.assertEqual(len(pages), total_expected_n_pages, (
                 '{0} check, expected len(pages) == {1!r}, '
                 'but len(pages) is {2!r}').format(
                     which, total_expected_n_pages, len(pages)
                 )
+            )
             testpage = pages_dict[url1]
             outtestpage = pages[testpage['title']]
-            assert outtestpage['description'] == \
+            self.assertEqual(outtestpage['description'],
                 testpage['description'], '{0} {1!r}'.format(which, outtestpage)
+            )
 
             subpage = pages_dict[url2]
-            assert pages[subpage['title']]['title'] == subpage['title'], \
+            self.assertEqual(
+                pages[subpage['title']]['title'], subpage['title'],
                     '{0} check, title of subpage: {1!r}'.format(which, subpage)
+            )
 
         _check('1st')
 
@@ -96,12 +105,18 @@ class TestWordpress(unittest.TestCase):
         for _, page_id, _ in changes:
             self._pages_to_cleanup.append(page_id)
 
-        assert len(changes) == 2, '2 changes completed: {0!r}'.format(changes)
+        self.assertEqual(len(changes), 2,
+                         '2 changes completed: {0!r}'.format(changes))
 
         _check('2nd')
-        assert [change[2] for change in changes] == 2 * ['edited'], changes
+        self.assertEqual(
+            [change[2] for change in changes], 2 * ['edited'], changes
+        )
 
 
 def test():
     unittest.main()
 
+
+if __name__ == '__main__':
+    test()
