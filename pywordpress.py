@@ -74,6 +74,33 @@ class Wordpress(object):
         )
         return results
 
+    def get_authors(self):
+        """http://codex.wordpress.org/XML-RPC_wp#wp.getAuthors"""
+        results = self.server.wp.getAuthors(
+            self.blog_id,
+            self.user,
+            self.password
+        )
+        return results
+
+    def get_categories(self):
+        """http://codex.wordpress.org/XML-RPC_wp#wp.getCategories"""
+        results = self.server.wp.getCategories(
+            self.blog_id,
+            self.user,
+            self.password
+        )
+        return results
+
+    def get_tags(self):
+        """http://codex.wordpress.org/XML-RPC_wp#wp.getTags"""
+        results = self.server.wp.getTags(
+            self.blog_id,
+            self.user,
+            self.password
+        )
+        return results
+
     def new_page(self, **kwargs):
         """http://codex.wordpress.org/XML-RPC_wp#wp.newPage
         
