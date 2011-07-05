@@ -1,10 +1,20 @@
 #!/usr/bin/env python
+from __future__ import with_statement, print_function
 
 import inspect
 import optparse
 import pprint
 import sys
-import xmlrpc.client
+
+try:
+    from xmlrpc.client import ServerProxy
+    from configparser import ConfigParser
+except ImportError:
+    from xmlrpclib import ServerProxy
+    from ConfigParser import SafeConfigParser as _ConfigParser
+
+    class ConfigParser(_ConfigParser):
+        read_file = _ConfigParser.readfp
 
 
 class Wordpress(object):
@@ -18,7 +28,7 @@ class Wordpress(object):
         ...
         >>> new_page_id = w.new_page(title='Title', description='Our content')
         >>> new_page = wp.get_page(new_page_id)
-        >>> print new_page['title']
+        >>> print(new_page['title'])
         Title
         >>> 
     '''
@@ -28,7 +38,7 @@ class Wordpress(object):
         self.password = password
         self.wp_url = wp_url
         xmlrpc_url = wp_url.rstrip('/') + '/xmlrpc.php'
-        self.server = xmlrpc.client.ServerProxy(xmlrpc_url)
+        self.server = ServerProxy(xmlrpc_url)
         self.blog_id = blog_id
         self.verbose = verbose
 
@@ -38,7 +48,6 @@ class Wordpress(object):
 
         For an example ini file see config.ini.tmpl
         '''
-        from configparser import ConfigParser
         cfg = ConfigParser()
         with open(config_fp) as infile:
             cfg.read_file(infile)
