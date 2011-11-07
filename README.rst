@@ -1,6 +1,6 @@
 A pythonic interface to Wordpress using the Wordpress XML-RPC API.
 
-Source code: https://bitbucket.org/rgrp/pywordpress
+Source code: https://github.com/rgrp/pywordpress
 
 
 Usage
@@ -33,7 +33,7 @@ Read the code documentation::
 Development
 ===========
 
-To run the rests you will need to:
+To run the tests you will need to:
 
 1. Create a wordpress install for the tests to interact with (WARNING: the
    tests delete all pages on teardown. DO NOT test this code against a
