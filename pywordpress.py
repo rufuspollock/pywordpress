@@ -56,7 +56,7 @@ class Wordpress(object):
         wp_url = cfg.get('wordpress', 'url')
         wp_user = cfg.get('wordpress', 'user')
         wp_password = cfg.get('wordpress', 'password')
-        return self(wp_url, wp_user, wp_password, delay=cfg.get("delay",None))
+        return self(wp_url, wp_user, wp_password, verbose=True, delay=int(cfg.get("wordpress","delay")))
 
     def _print(self, msg):
         if self.verbose:
@@ -79,6 +79,9 @@ class Wordpress(object):
             self.user,
             self.password
         )
+        if self.delay:
+            import time
+            time.sleep(self.delay)
         return results
 
     def get_pages(self):
