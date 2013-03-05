@@ -117,7 +117,11 @@ class Wordpress(object):
         return results
 
     def new_page(self, **kwargs):
-        '''http://codex.wordpress.org/XML-RPC_wp#wp.newPage
+        '''http://codex.wordpress.org/XML-RPC_WordPress_API/Pages#wp.newPage
+
+        All options are supported, e.g. to set comments on pass
+
+            mt_allow_comments='open'
         
         :param **kwargs: all other possible arguments for content struct (see
         WP docs).
@@ -177,7 +181,8 @@ class Wordpress(object):
         return bool(result)
 
     def create_many_pages(self, pages_dict):
-        '''Create many pages at once (and only create pages which do not already exist).
+        '''Create many pages at once (pages which already exist will be edited
+        rather than created).
 
         pages_dict = {
             '/about/': {
@@ -222,6 +227,7 @@ class Wordpress(object):
                 parent_url_path = '/'.join(segments[:-1])
                 parent_page_id = existing_pages[parent_url_path]['page_id']
                 content_struct['wp_page_parent_id'] = parent_page_id
+
             if not url_path in existing_pages:
                 page_id = self.new_page(**content_struct)
                 existing_pages[url_path] = { 'page_id': page_id }
