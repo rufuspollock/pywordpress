@@ -33,7 +33,7 @@ class Wordpress(object):
         >>> 
     '''
 
-    def __init__(self, wp_url, username, password, blog_id=0, verbose=False):
+    def __init__(self, wp_url, username, password, blog_id=0, verbose=False, delay=None):
         self.user = username
         self.password = password
         self.wp_url = wp_url
@@ -41,6 +41,7 @@ class Wordpress(object):
         self.server = ServerProxy(xmlrpc_url)
         self.blog_id = blog_id
         self.verbose = verbose
+        self.delay=delay
 
     @classmethod
     def init_from_config(self, config_fp):
@@ -55,7 +56,7 @@ class Wordpress(object):
         wp_url = cfg.get('wordpress', 'url')
         wp_user = cfg.get('wordpress', 'user')
         wp_password = cfg.get('wordpress', 'password')
-        return self(wp_url, wp_user, wp_password)
+        return self(wp_url, wp_user, wp_password, verbose=True, delay=int(cfg.get("wordpress","delay")))
 
     def _print(self, msg):
         if self.verbose:
@@ -78,6 +79,9 @@ class Wordpress(object):
             self.user,
             self.password
         )
+        if self.delay:
+            import time
+            time.sleep(self.delay)
         return results
 
     def get_pages(self):
@@ -236,6 +240,9 @@ class Wordpress(object):
                 page_id = existing_pages[url_path]['page_id']
                 self.edit_page(page_id, **content_struct)
                 changes.append([url_path, page_id, 'edited'])
+            if self.delay:
+                import time
+                time.sleep(self.delay)
         return changes
 
 
