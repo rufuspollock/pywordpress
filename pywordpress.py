@@ -5,6 +5,7 @@ import inspect
 import optparse
 import pprint
 import sys
+import itertools
 
 try:
     from xmlrpc.client import ServerProxy
@@ -197,8 +198,8 @@ class Wordpress(object):
         ## get a list of existing pages keyed by their urls
 
         ## use get_page_list as that shows trash items as well as active
-        pagelist = [ self.get_page(x['page_id']) for x in self.get_page_list()
-                ]
+        pagelist = [ self.get_page(x['page_id']) for x in 
+            itertools.ifilter(lambda x: x['page_status'] != 'trash',self.get_page_list()) ]
         pagedict = dict([ (p['page_id'], p) for p in pagelist ])
         def get_page_url(page):
             parent_id = page['wp_page_parent_id']
