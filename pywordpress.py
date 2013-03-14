@@ -47,6 +47,7 @@ class Cache(object):
       self.pages={}
   
   def write(self):
+    ''' write the cache file - this is called automatically on exit '''
     import pickle
     try:
       f=open(self.cachefile,"wb")
@@ -56,6 +57,10 @@ class Cache(object):
       print("Can't write cache file")
 
   def get_page(self, page_id):
+    ''' get the page with page_id from the cache
+      if the page does not exist in the cache, get it from wordpress and
+      cache the result '''
+
     def get_page_from_wp_and_cache(page_id):
       page=self.wp._get_page(page_id)
       self.pages[page_id]=page
