@@ -7,7 +7,7 @@ except ImportError:
         from setuptools import setup
 
 
-__version__ = '0.1'
+__version__ = '0.1cache'
 try:
     fo = open('README.rst')
     __description__ = fo.read()
