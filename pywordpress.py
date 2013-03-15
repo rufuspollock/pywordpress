@@ -35,7 +35,7 @@ class Cache(object):
     self.wp=wordpress
     if cachefile:
       try:
-        f=open(cachefile)
+        f=open(cachefile,"rb")
         self.pages=pickle.load(f)
         f.close()
       except IOError:
