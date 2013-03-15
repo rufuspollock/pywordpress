@@ -263,10 +263,10 @@ class Wordpress(object):
         ## get a list of existing pages keyed by their urls
 
         ## use get_page_list as that shows trash items as well as active
-        pagelist = [i for i in itertools.ifilter(lambda x: x.get('page_status',None) != 'trash',
-        ( self.get_page(x['page_id']) for x in self.get_page_list()))]
+        pagelist = itertools.ifilter(lambda x: x.get('page_status',None) != 'trash',
+        ( self.get_page(x['page_id']) for x in self.get_page_list()))
 
-        pagedict = dict([ (p['page_id'], p) for p in pagelist ])
+        pagedict = dict(( (p['page_id'], p) for p in pagelist ))
         def get_page_url(page):
             parent_id = page['wp_page_parent_id']
             if parent_id == 0:
@@ -274,7 +274,7 @@ class Wordpress(object):
             else:
                 return get_page_url(pagedict[parent_id]) + '/' + page['wp_slug']
         existing_pages = dict(
-                [(get_page_url(p), p) for p in pagelist]
+                ((get_page_url(p), p) for p in pagedict.values())
         )
         changes = []
         # sort by key (url_path) so we can create in right order
