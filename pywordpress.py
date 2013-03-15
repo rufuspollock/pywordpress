@@ -6,6 +6,7 @@ import optparse
 import pprint
 import sys
 import itertools
+import re
 
 try:
     from xmlrpc.client import ServerProxy
@@ -56,21 +57,30 @@ class Cache(object):
     except IOError:
       print("Can't write cache file")
 
+  def get_and_cache_page(self,page_id):
+    page=self.wp._get_page(page_id)
+    self.pages[str(page_id)]=page
+    return page
+    
   def get_page(self, page_id):
     ''' get the page with page_id from the cache
       if the page does not exist in the cache, get it from wordpress and
       cache the result '''
 
-    def get_page_from_wp_and_cache(page_id):
-      page=self.wp._get_page(page_id)
-      self.pages[str(page_id)]=page
-      return page
-
     page=self.pages.get(str(page_id))
     if not page:
-      page=get_page_from_wp_and_cache(page_id)
+      page=self.get_and_cache_page(page_id)
     return page
-     
+
+  def get_changed_pages(self,page_dict,existing_pages):
+    def ischanged(page):  
+      slug=re.sub("^/|/$","",page[0])
+      content=page[1]
+      if slug in existing_pages:
+        return content['description']!=existing_pages[slug]['description']
+      else:
+        return True
+    return dict(itertools.ifilter(ischanged, page_dict.items()))
     
 class Wordpress(object):
     '''Interact with an existing wordpress install via xml-rpc
@@ -248,6 +258,12 @@ class Wordpress(object):
             self.password,
             edit_struct
         )
+
+        # if page is cached - update the cache
+
+        if self.cache:
+          self.cache.get_and_cache_page(page_id)
+
         return bool(result)
 
     def create_many_pages(self, pages_dict):
@@ -281,6 +297,11 @@ class Wordpress(object):
                 ((get_page_url(p), p) for p in pagedict.values())
         )
         changes = []
+
+        # if the cache exists: check whether the file has been updated
+        if self.cache:
+          pages_dict=self.cache.get_changed_pages(pages_dict,existing_pages)
+
         # sort by key (url_path) so we can create in right order
         for url_path in sorted(pages_dict.keys()):
             self._print('Processing: %s' % url_path)
