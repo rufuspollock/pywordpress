@@ -63,9 +63,13 @@ class Cache(object):
 
     def get_page_from_wp_and_cache(page_id):
       page=self.wp._get_page(page_id)
-      self.pages[page_id]=page
+      self.pages[str(page_id)]=page
       return page
-    return self.pages.get(page_id,get_page_from_wp_and_cache(page_id))
+
+    page=self.pages.get(str(page_id))
+    if not page:
+      page=get_page_from_wp_and_cache(page_id)
+    return page
      
     
 class Wordpress(object):
