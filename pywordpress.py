@@ -173,6 +173,27 @@ class Wordpress(object):
         )
         return results
 
+    def get_posts(self):
+        '''http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.getPosts'''
+        results = self.server.wp.getPosts(
+            self.blog_id,
+            self.user,
+            self.password
+            )
+        return results
+
+    def get_post(self, post_id):
+        '''http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.getPost'''
+        results = self.server.wp.getPost(
+            self.blog_id,
+            self.user,
+            self.password,
+            post_id)
+        if self.delay:
+            import time
+            time.sleep(self.delay)
+        return results
+
     def get_authors(self):
         """http://codex.wordpress.org/XML-RPC_wp#wp.getAuthors"""
         results = self.server.wp.getAuthors(
