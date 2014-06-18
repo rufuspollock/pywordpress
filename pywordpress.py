@@ -173,13 +173,21 @@ class Wordpress(object):
         )
         return results
 
-    def get_posts(self):
+    def get_posts(self,filter=None):
         '''http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.getPosts'''
-        results = self.server.wp.getPosts(
-            self.blog_id,
-            self.user,
-            self.password
-            )
+        if filter:
+            results = self.server.wp.getPosts(
+                self.blog_id,
+                self.user,
+                self.password,
+                filter
+                )
+        else:
+            results = self.server.wp.getPosts(
+                self.blog_id,
+                self.user,
+                self.password
+                )
         return results
 
     def get_post(self, post_id):
