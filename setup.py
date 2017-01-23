@@ -9,7 +9,7 @@ except ImportError:
 
 __version__ = '0.1cache'
 try:
-    fo = open('README.rst')
+    fo = open('README.md')
     __description__ = fo.read()
     fo.close()
 except (IOError, OSError):
@@ -23,7 +23,7 @@ setup(
     description=__description__.split('\n')[0],
     long_description=__description__,
     author='Rufus Pollock',
-    url='http://bitbucket.org/rgrp/pywordpress/',
+    url='http://github.com/rufuspollock/pywordpress/',
     keywords='wordpress python',
     py_modules=['pywordpress'],
     zip_safe=False,
