@@ -19,68 +19,67 @@ except ImportError:
         read_file = _ConfigParser.readfp
 
 class Cache(object):
-  ''' The page cache for wordpress
+    ''' The page cache for wordpress
 
     Sample usage::
-    
+
     >>> import pywordpress
     >>> wp = pywordpress.Wordpress('http://wp.site.com/', 'my-username', 'my-password')
     >>> c=pywordpress.Cache(cachefile=".cache", wordpress=wp)
     >>> c.get_page(0)
     >>> 
-  '''
+    '''
 
-  def __init__(self, cachefile=None, wordpress=None):
-    import pickle,atexit
-    self.cachefile=cachefile
-    self.wp=wordpress
-    if cachefile:
-      try:
-        f=open(cachefile,"rb")
-        self.pages=pickle.load(f)
-        f.close()
-      except IOError:
-        self.pages={}
-      except EOFError:
-        self.pages={}
-      atexit.register(self.write)
-    else:  
-      self.pages={}
+    def __init__(self, cachefile=None, wordpress=None):
+        import pickle,atexit
+        self.cachefile=cachefile
+        self.wp=wordpress
+        if cachefile:
+            try:
+                f=open(cachefile,"rb")
+                self.pages=pickle.load(f)
+                f.close()
+            except IOError:
+                self.pages={}
+            except EOFError:
+                self.pages={}
+            atexit.register(self.write)
+        else:  
+            self.pages={}
   
-  def write(self):
-    ''' write the cache file - this is called automatically on exit '''
-    import pickle
-    try:
-      f=open(self.cachefile,"wb")
-      pickle.dump(self.pages,f)
-      f.close()
-    except IOError:
-      print("Can't write cache file")
+    def write(self):
+        ''' write the cache file - this is called automatically on exit '''
+        import pickle
+        try:
+            f=open(self.cachefile,"wb")
+            pickle.dump(self.pages,f)
+            f.close()
+        except IOError:
+            print("Can't write cache file")
 
-  def get_and_cache_page(self,page_id):
-    page=self.wp._get_page(page_id)
-    self.pages[str(page_id)]=page
-    return page
+    def get_and_cache_page(self,page_id):
+        page=self.wp._get_page(page_id)
+        self.pages[str(page_id)]=page
+        return page
     
-  def get_page(self, page_id):
-    ''' get the page with page_id from the cache
-      if the page does not exist in the cache, get it from wordpress and
-      cache the result '''
+    def get_page(self, page_id):
+        ''' get the page with page_id from the cache
+          if the page does not exist in the cache, get it from wordpress and
+          cache the result '''
+        page=self.pages.get(str(page_id))
+        if not page:
+            page=self.get_and_cache_page(page_id)
+        return page
 
-    page=self.pages.get(str(page_id))
-    if not page:
-      page=self.get_and_cache_page(page_id)
-    return page
-
-  def get_changed_pages(self,page_dict,existing_pages):
-    def ischanged(page):  
-      slug=re.sub("^/|/$","",page[0])
-      content=page[1]
-      if slug in existing_pages:
-        return content['description']!=existing_pages[slug]['description']
-      else:
-        return True
-    return dict(itertools.ifilter(ischanged, page_dict.items()))
+    def get_changed_pages(self,page_dict,existing_pages):
+        def ischanged(page):  
+              slug=re.sub("^/|/$","",page[0])
+              content=page[1]
+              if slug in existing_pages:
+                return content['description']!=existing_pages[slug]['description']
+              else:
+                return True
+        return dict(itertools.ifilter(ischanged, page_dict.items()))
     
 class Wordpress(object):
     '''Interact with an existing wordpress install via xml-rpc
@@ -108,9 +107,9 @@ class Wordpress(object):
         self.verbose = verbose
         self.delay=delay
         if cache:
-          self.cache=Cache(cachefile=cachefile,wordpress=self)
+            self.cache=Cache(cachefile=cachefile,wordpress=self)
         else:
-          self.cache=None
+            self.cache=None
 
     @classmethod
     def init_from_config(self, config_fp):
@@ -127,9 +126,9 @@ class Wordpress(object):
         wp_password = cfg.get('wordpress', 'password')
         wp_cachefile = cfg.get('wordpress', 'cachefile',None)
         if wp_cachefile:
-         wp_cache=True
+            wp_cache=True
         else:
-          wp_cache=False  
+            wp_cache=False  
         return self(wp_url, wp_user, wp_password, verbose=True, delay=int(cfg.get("wordpress","delay",0)), cache=wp_cache, cachefile=wp_cachefile)
 
     def _print(self, msg):
@@ -146,10 +145,10 @@ class Wordpress(object):
         return results
 
     def get_page(self, page_id):
-      if self.cache:
-        return self.cache.get_page(page_id)
-      else: 
-        return self._get_page(page_id)
+        if self.cache:
+            return self.cache.get_page(page_id)
+        else: 
+            return self._get_page(page_id)
         
     def _get_page(self, page_id):
         '''http://codex.wordpress.org/XML-RPC_wp#wp.getPage'''
