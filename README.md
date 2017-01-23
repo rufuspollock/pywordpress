@@ -3,17 +3,15 @@ A pythonic interface to Wordpress using the Wordpress XML-RPC API.
 Source code: https://github.com/rgrp/pywordpress
 
 
-Usage
-=====
+## Usage
 
-Command line
-------------
+### Command line
 
-Check out the commands::
+Check out the commands:
 
     wordpress.py -h 
 
-Commands::
+Commands:
 
     create_many_pages: Create many pages at once (and only create pages which do not already exist).
     delete_all_pages: Delete all pages (i.e. delete_page for each page in instance).
@@ -30,15 +28,14 @@ Commands::
 
 
 You will need to create a config with the details (url, login) of the wordpress
-instance you want to work with::
+instance you want to work with:
 
     cp config.ini.tmpl config.ini
     # now edit away ...
     vim config.ini
 
 
-Python library
---------------
+### Python library
 
 Read the code documentation::
 
@@ -46,8 +43,7 @@ Read the code documentation::
     >>> help(Wordpress)
 
 
-Development
-===========
+## Development
 
 To run the tests you will need to:
 
@@ -68,13 +64,11 @@ To run the tests then do::
     nosetests test_pywordpress.py
 
 
-Author
-======
+## Author
 
 Rufus Pollock - http://rufuspollock.org/
 
-License
-=======
+## License
 
 MIT-licensed: http://www.opensource.org/licenses/mit-license.php
 
