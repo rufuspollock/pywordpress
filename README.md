@@ -9,7 +9,7 @@ Source code: https://github.com/rgrp/pywordpress
 
 Check out the commands:
 
-    wordpress.py -h 
+    pywordpress.py -h 
 
 Commands:
 
@@ -42,6 +42,77 @@ Read the code documentation::
     >>> from pywordpress import Wordpress
     >>> help(Wordpress)
 
+Here's an example that downloads all of a sites pages to a CSV file:
+
+```python=
+import pywordpress
+
+# pip install backports.csv
+# use python 3 csv library that supports unicode as Wordpress pages are utf8 encoded
+from backports import csv
+import io
+
+# use site details and login from config
+wp = pywordpress.Wordpress.init_from_config('config.ini')
+
+def write_to_csv(filename, list_of_pages_or_posts):
+    fo = io.open(filename, 'w', newline='', encoding='utf-8')
+    fieldnames = list_of_pages_or_posts[0].keys()
+    writer = csv.DictWriter(fo, fieldnames)
+    writer.writeheader()
+    writer.writerows(list_of_pages_or_posts)
+
+# get the first 100 pages
+out = wp.get_pages(100)
+print('Number of pages: %s' % len(out))
+
+# write the list of pages to the CSV files
+write_to_csv('pages.csv', out)
+```
+
+Here's a more elaborate version that saves all posts and pages ...
+
+```
+import pywordpress
+
+# pip install backports.csv
+# use python 3 csv library that supports unicode as Wordpress pages are utf8 encoded
+from backports import csv
+import io
+
+# use site details and login from config
+wp = pywordpress.Wordpress.init_from_config('config.ini')
+
+def write_to_csv(filename, list_of_pages_or_posts):
+    fo = io.open(filename, 'w', newline='', encoding='utf-8')
+    fieldnames = list_of_pages_or_posts[0].keys()
+    writer = csv.DictWriter(fo, fieldnames)
+    writer.writeheader()
+    writer.writerows(list_of_pages_or_posts)
+
+def do_pages():
+    out = wp.get_pages(100)
+    print('Number of pages: %s' % len(out))
+    write_to_csv('rufuspollock-org-pages.csv', out)
+
+def do_posts():
+    # total posts (you can check this yourself in your wordpress admin section)
+    total = 588
+    chunk_size = 100
+    chunks = 1 + (total / chunk_size)
+    out = []
+    count = 0
+    while count < chunks:
+        items = wp.get_posts(filter={'number': chunk_size, 'offset':
+            chunk_size*count})
+        out.extend(items)
+        count += 1
+    print('Number of posts: %s' % len(out))
+    write_to_csv('rufuspollock-org-posts.csv', out)
+
+do_pages()
+do_posts()
+```
 
 ## Development
 
