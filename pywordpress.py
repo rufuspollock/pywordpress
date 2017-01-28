@@ -163,12 +163,13 @@ class Wordpress(object):
             time.sleep(self.delay)
         return results
 
-    def get_pages(self):
+    def get_pages(self, max_pages=10):
         '''http://codex.wordpress.org/XML-RPC_wp#wp.getPages'''
         results = self.server.wp.getPages(
             self.blog_id,
             self.user,
-            self.password
+            self.password,
+            max_pages
         )
         return results
 
