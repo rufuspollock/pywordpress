@@ -1,6 +1,6 @@
 A pythonic interface to Wordpress using the Wordpress XML-RPC API.
 
-Source code: https://github.com/rgrp/pywordpress
+Source code: https://github.com/rufuspollock/pywordpress
 
 
 ## Usage
@@ -13,25 +13,25 @@ Check out the commands:
 
 Commands:
 
-    create_many_pages: Create many pages at once (and only create pages which do not already exist).
-    delete_all_pages: Delete all pages (i.e. delete_page for each page in instance).
-    delete_page: http://codex.wordpress.org/XML-RPC_wp#wp.deletePage
-    edit_page: http://codex.wordpress.org/XML-RPC_wp#wp.editPage
-    get_authors: http://codex.wordpress.org/XML-RPC_wp#wp.getAuthors
-    get_categories: http://codex.wordpress.org/XML-RPC_wp#wp.getCategories
-    get_page: http://codex.wordpress.org/XML-RPC_wp#wp.getPage
-    get_page_list: http://codex.wordpress.org/XML-RPC_wp#wp.getPageList
-    get_pages: http://codex.wordpress.org/XML-RPC_wp#wp.getPages
-    get_tags: http://codex.wordpress.org/XML-RPC_wp#wp.getTags
-    init_from_config: Class method to initialize a `Wordpress` instance from an ini file.
-    new_page: http://codex.wordpress.org/XML-RPC_wp#wp.newPage
+* `create_many_pages`: Create many pages at once (and only create pages which do not already exist).
+* `delete_all_pages`: Delete all pages (i.e. delete_page for each page in instance).
+* `delete_page`: http://codex.wordpress.org/XML-RPC_wp#wp.deletePage
+* `edit_page`: http://codex.wordpress.org/XML-RPC_wp#wp.editPage
+* `get_authors`: http://codex.wordpress.org/XML-RPC_wp#wp.getAuthors
+* `get_categories`: http://codex.wordpress.org/XML-RPC_wp#wp.getCategories
+* `get_page`: http://codex.wordpress.org/XML-RPC_wp#wp.getPage
+* `get_page_list`: http://codex.wordpress.org/XML-RPC_wp#wp.getPageList
+* `get_pages`: http://codex.wordpress.org/XML-RPC_wp#wp.getPages
+* `get_tags`: http://codex.wordpress.org/XML-RPC_wp#wp.getTags
+* `init_from_config`: Class method to initialize a `Wordpress` instance from an ini file.
+* `new_page`: http://codex.wordpress.org/XML-RPC_wp#wp.newPage
 
 
 You will need to create a config with the details (url, login) of the wordpress
 instance you want to work with:
 
     cp config.ini.tmpl config.ini
-    # now edit away ...
+    # edit the config with your details
     vim config.ini
 
 
