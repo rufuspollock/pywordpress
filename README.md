@@ -11,7 +11,7 @@ Check out the commands:
 
     pywordpress.py -h 
 
-Commands:
+Commands and methods:
 
 * `create_many_pages`: Create many pages at once (and only create pages which do not already exist).
 * `delete_all_pages`: Delete all pages (i.e. delete_page for each page in instance).
@@ -23,9 +23,21 @@ Commands:
 * `get_page_list`: http://codex.wordpress.org/XML-RPC_wp#wp.getPageList
 * `get_pages`: http://codex.wordpress.org/XML-RPC_wp#wp.getPages
 * `get_tags`: http://codex.wordpress.org/XML-RPC_wp#wp.getTags
+* `get_comments`: https://codex.wordpress.org/XML-RPC_WordPress_API/Comments#wp.getComments
 * `init_from_config`: Class method to initialize a `Wordpress` instance from an ini file.
 * `new_page`: http://codex.wordpress.org/XML-RPC_wp#wp.newPage
 
+You can use these both from the command line and the library:
+
+```
+# command line
+pywordpress.py get_comments
+
+# in python
+wp = pywordpress.Wordpress.init_from_config('config.ini')
+pages= wp.get_pages()
+print(pages)
+```
 
 You will need to create a config with the details (url, login) of the wordpress
 instance you want to work with:
@@ -35,7 +47,7 @@ instance you want to work with:
     vim config.ini
 
 
-### Python library
+### Python Library
 
 Read the code documentation::
 
@@ -93,7 +105,7 @@ def write_to_csv(filename, list_of_pages_or_posts):
 def do_pages():
     out = wp.get_pages(100)
     print('Number of pages: %s' % len(out))
-    write_to_csv('rufuspollock-org-pages.csv', out)
+    write_to_csv('pages.csv', out)
 
 def do_posts():
     # total posts (you can check this yourself in your wordpress admin section)
@@ -108,7 +120,7 @@ def do_posts():
         out.extend(items)
         count += 1
     print('Number of posts: %s' % len(out))
-    write_to_csv('rufuspollock-org-posts.csv', out)
+    write_to_csv('posts.csv', out)
 
 do_pages()
 do_posts()

@@ -228,6 +228,23 @@ class Wordpress(object):
             self.password
         )
         return results
+    
+    def get_comments(self, filter=None):
+        '''http://codex.wordpress.org/XML-RPC_WordPress_API/Posts#wp.getComments'''
+        if filter:
+            results = self.server.wp.getComments(
+                self.blog_id,
+                self.user,
+                self.password,
+                filter
+                )
+        else:
+            results = self.server.wp.getComments(
+                self.blog_id,
+                self.user,
+                self.password
+                )
+        return results
 
     def new_page(self, **kwargs):
         '''http://codex.wordpress.org/XML-RPC_WordPress_API/Pages#wp.newPage
